@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
@@ -19,22 +19,25 @@ contract NftOnchain is ERC721URIStorage {
     uint256  nextTokenID;
 
 
-    function svgToImageURI(string memory svg) public pure returns (string memory) {
-       string memory baseURL = "data:image/svg+xml;base64,";
-       string memory svgBase64Encoded = Base64.encode(bytes(svg));
-
+    function svgToImageURI(
+        string memory svg
+    ) public pure returns (string memory) {
+        string memory baseURL = "data:image/svg+xml;base64,";
+        string memory svgBase64Encoded = Base64.encode(bytes(svg));
         return string(abi.encodePacked(baseURL, svgBase64Encoded));
     }
 
-    function formatTokenURI(string memory imageURI) public pure returns (string memory) {
-       return
+    function formatTokenURI(
+        string memory imageURI
+    ) public pure returns (string memory) {
+        return
             string(
                 abi.encodePacked(
                     "data:application/json;base64,",
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
-                                '{"name": "NFT ON-CHAINED", "description": "A simple SVG based on-chain NFT", "image":"',
+                                '{"name": "NFT ONCHAIN", "description": "A simple SVG based on-chain NFT", "image":"',
                                 imageURI,
                                 '"}'
                             )
@@ -44,14 +47,16 @@ contract NftOnchain is ERC721URIStorage {
             );
     }
 
+
      function mint(string memory svg) external {
         string memory imageURI = svgToImageURI(svg);
         string memory tokenURI = formatTokenURI(imageURI);
-
+        
+        nextTokenID++;
 
         _safeMint(msg.sender, nextTokenID);
         _setTokenURI(nextTokenID, tokenURI);
-        nextTokenID++;
+       
 
         emit Minted(tokenURI);
      }
